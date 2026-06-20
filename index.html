@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="id" style="scroll-behavior: smooth; -webkit-overflow-scrolling: touch;">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+    <title>Dikaa Bot · Yeremia Andika</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        body {
+            background: #05080f;
+            font-family: 'Inter', sans-serif;
+            color: #f1f5f9;
+            min-height: 100vh;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #05080f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e2a44;
+            border-radius: 12px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00a8ff;
+        }
+
+        /* ===== ANIMATED BACKGROUND GRADIENT ===== */
+        .bg-animated {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(0, 168, 255, 0.05), transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(37, 211, 102, 0.03), transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.03), transparent 60%),
+                        #05080f;
+            animation: bgPulse 12s infinite alternate ease-in-out;
+        }
+        @keyframes bgPulse {
+            0% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        /* ===== CANVAS PARTIKEL ===== */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* ===== GLASS CARD dengan glossy shine ===== */
+        .glass-card {
+            background: rgba(10, 16, 30, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 168, 255, 0.15);
+            box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.8), inset 0 0 60px rgba(0, 168, 255, 0.02);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            will-change: transform;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(0, 168, 255, 0.2), transparent 40%, rgba(37, 211, 102, 0.05));
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            pointer-events: none;
+        }
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+        .glass-card:hover {
+            transform: translateY(-12px) scale(1.01);
+            border-color: rgba(0, 168, 255, 0.5);
+            box-shadow: 0 30px 70px -15px rgba(0, 168, 255, 0.25), 0 0 40px rgba(0, 168, 255, 0.05);
+        }
+        .glass-card>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glossy shine effect (sliding) */
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(135deg, transparent 40%, rgba(255, 255, 255, 0.03) 50%, transparent 60%);
+            transform: rotate(25deg);
+            transition: all 0.8s ease;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+        }
+        .glass-card:hover::after {
+            opacity: 1;
+            transform: rotate(25deg) translateX(20%);
+        }
+
+        /* ===== BADGE ===== */
+        .badge-hot {
+            background: linear-gradient(135deg, #f97316, #ef4444);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 999px;
+            letter-spacing: 0.3px;
+            animation: pulse-badge 2s infinite ease-in-out;
+        }
+        @keyframes pulse-badge {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+        }
+        .badge-starter {
+            background: rgba(37, 211, 102, 0.15);
+            color: #25d366;
+            font-weight: 500;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 999px;
+            border: 1px solid rgba(37, 211, 102, 0.2);
+            animation: pulse-starter 3s infinite ease-in-out;
+        }
+        @keyframes pulse-starter {
+            0%,
+            100% {
+                border-color: rgba(37, 211, 102, 0.2);
+            }
+            50% {
+                border-color: rgba(37, 211, 102, 0.6);
+            }
+        }
+
+        /* ===== BUTTON with neon glow ===== */
+        .btn-primary {
+            background: #00a8ff;
+            color: #0b111e;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 4px 25px rgba(0, 168, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, #00a8ff, #25d366, #00a8ff);
+            background-size: 300% 300%;
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            animation: glow-shift 3s infinite linear;
+        }
+        @keyframes glow-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        .btn-primary:hover::after {
+            opacity: 1;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 8px 40px rgba(0, 168, 255, 0.6);
+            background: #25d366;
+        }
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        /* Tombol sosial media dengan efek neon */
+        .btn-social {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 32px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border: none;
+            color: #fff;
+            min-width: 170px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-social::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: inherit;
+            background: inherit;
+            filter: blur(12px);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: -1;
+        }
+        .btn-social:hover::after {
+            opacity: 0.6;
+        }
+        .btn-wa {
+            background: #25d366;
+            box-shadow: 0 6px 30px rgba(37, 211, 102, 0.3);
+        }
+        .btn-wa:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 12px 45px rgba(37, 211, 102, 0.5);
+        }
+        .btn-ig {
+            background: radial-gradient(circle at 30% 30%, #fdf497, #fdf497 25%, #fd5949 50%, #d6249f 75%, #285aeb);
+            box-shadow: 0 6px 30px rgba(214, 41, 118, 0.3);
+        }
+        .btn-ig:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 12px 45px rgba(214, 41, 118, 0.5);
+        }
+
+        /* ===== ICON CIRCLE ===== */
+        .icon-circle {
+            background: rgba(10, 18, 34, 0.8);
+            border-radius: 16px;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00a8ff;
+            border: 1px solid rgba(0, 168, 255, 0.2);
+            transition: all 0.5s ease;
+            font-size: 1.8rem;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.05);
+        }
+        .glass-card:hover .icon-circle {
+            border-color: #00a8ff;
+            box-shadow: 0 0 40px rgba(0, 168, 255, 0.2);
+            transform: rotate(-6deg) scale(1.08);
+            color: #25d366;
+        }
+
+        /* ===== TAG CHIP ===== */
+        .tag-chip {
+            background: rgba(10, 18, 34, 0.6);
+            color: #b9c7e0;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.9rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(2px);
+            font-family: 'Fira Code', monospace;
+            transition: all 0.4s ease;
+        }
+        .glass-card:hover .tag-chip {
+            border-color: rgba(0, 168, 255, 0.3);
+            background: rgba(0, 168, 255, 0.08);
+            color: #e2e8f0;
+        }
+
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            background: rgba(5, 8, 15, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 168, 255, 0.1);
+            border-radius: 32px 32px 0 0;
+            box-shadow: 0 -8px 50px rgba(0, 0, 0, 0.8);
+        }
+        .bottom-nav a {
+            color: #64748b;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.7rem;
+            gap: 2px;
+            position: relative;
+        }
+        .bottom-nav a i {
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
+        }
+        .bottom-nav a.active i,
+        .bottom-nav a.active span {
+            color: #00a8ff;
+        }
+        .bottom-nav a.active::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            width: 24px;
+            height: 3px;
+            background: #00a8ff;
+            border-radius: 4px;
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.6);
+            animation: nav-glow 2s infinite alternate;
+        }
+        @keyframes nav-glow {
+            0% {
+                box-shadow: 0 0 10px rgba(0, 168, 255, 0.2);
+                width: 20px;
+            }
+            100% {
+                box-shadow: 0 0 40px rgba(0, 168, 255, 0.8);
+                width: 28px;
+            }
+        }
+        .bottom-nav a:hover i,
+        .bottom-nav a:hover span {
+            color: #e2e8f0;
+        }
+
+        /* ===== HERO TEXT ANIMATION ===== */
+        .hero-gradient-text {
+            background: linear-gradient(135deg, #e0f2fe, #00a8ff, #25d366, #00a8ff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: hero-shimmer 6s infinite ease-in-out;
+        }
+        @keyframes hero-shimmer {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* ===== TYPING CURSOR ===== */
+        .typing-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background: #00a8ff;
+            margin-left: 4px;
+            vertical-align: text-bottom;
+            animation: blink-cursor 0.8s step-end infinite;
+            border-radius: 2px;
+        }
+        @keyframes blink-cursor {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* ===== SCROLL REVEAL ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: all 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: transform, opacity;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+        .reveal-delay-2 {
+            transition-delay: 0.25s;
+        }
+        .reveal-delay-3 {
+            transition-delay: 0.4s;
+        }
+        .reveal-delay-4 {
+            transition-delay: 0.55s;
+        }
+
+        /* ===== FLOATING ===== */
+        .float-slow {
+            animation: float-slow 7s infinite ease-in-out;
+        }
+        @keyframes float-slow {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-14px) rotate(2deg);
+            }
+        }
+        .float-fast {
+            animation: float-fast 4.5s infinite ease-in-out;
+        }
+        @keyframes float-fast {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-8px) rotate(-2deg);
+            }
+        }
+
+        /* ===== ORBS ===== */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+            animation: orb-float 25s infinite alternate ease-in-out;
+        }
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: #00a8ff;
+            top: -15%;
+            right: -10%;
+            animation-duration: 20s;
+        }
+        .orb-2 {
+            width: 450px;
+            height: 450px;
+            background: #25d366;
+            bottom: -10%;
+            left: -10%;
+            animation-duration: 25s;
+            animation-delay: -6s;
+        }
+        .orb-3 {
+            width: 350px;
+            height: 350px;
+            background: #7c3aed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 30s;
+            animation-delay: -12s;
+        }
+        .orb-4 {
+            width: 300px;
+            height: 300px;
+            background: #f97316;
+            bottom: 20%;
+            right: 5%;
+            animation-duration: 22s;
+            animation-delay: -8s;
+        }
+        @keyframes orb-float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(40px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-30px, 40px) scale(0.9);
+            }
+            100% {
+                transform: translate(20px, -30px) scale(1.05);
+            }
+        }
+
+        /* ===== AVATAR BULAT ===== */
+        .avatar {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(0, 168, 255, 0.4);
+            box-shadow: 0 0 40px rgba(0, 168, 255, 0.15);
+            transition: all 0.5s ease;
+            flex-shrink: 0;
+        }
+        .avatar:hover {
+            border-color: #00a8ff;
+            box-shadow: 0 0 70px rgba(0, 168, 255, 0.25);
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .orb-1 {
+                width: 250px;
+                height: 250px;
+                top: -5%;
+            }
+            .orb-2 {
+                width: 220px;
+                height: 220px;
+                bottom: 0%;
+            }
+            .orb-3 {
+                width: 200px;
+                height: 200px;
+            }
+            .orb-4 {
+                width: 180px;
+                height: 180px;
+            }
+            .bottom-nav a i {
+                font-size: 1.2rem;
+            }
+            .avatar {
+                width: 70px;
+                height: 70px;
+            }
+            .btn-social {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                min-width: 130px;
+            }
+        }
+
+        .font-mono-code {
+            font-family: 'Fira Code', monospace;
+        }
+        .text-glow {
+            text-shadow: 0 0 40px rgba(0, 168, 255, 0.15);
+        }
+        .border-glow {
+            border-color: rgba(0, 168, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.03);
+        }
+        .hover-glow:hover {
+            box-shadow: 0 0 50px rgba(0, 168, 255, 0.1);
+        }
+        .bg-dark-card {
+            background: rgba(5, 8, 15, 0.6);
+        }
+        .link-card {
+            cursor: pointer;
+        }
+        .link-card .btn-primary {
+            background: #25d366;
+            box-shadow: 0 4px 25px rgba(37, 211, 102, 0.3);
+        }
+        .link-card .btn-primary:hover {
+            background: #00a8ff;
+            box-shadow: 0 8px 40px rgba(0, 168, 255, 0.5);
+        }
+        .link-card .btn-primary i {
+            margin-right: 6px;
+        }
+
+        /* Neon border */
+        .neon-border {
+            position: relative;
+        }
+        .neon-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(135deg, #00a8ff, #25d366, #00a8ff);
+            background-size: 300% 300%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            animation: border-rotate 4s infinite linear;
+            pointer-events: none;
+        }
+        @keyframes border-rotate {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        .neon-border:hover::before {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== ANIMATED BACKGROUND ===== -->
+    <div class="bg-animated"></div>
+
+    <!-- ===== ORBS ===== -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+
+    <!-- ===== CANVAS PARTIKEL ===== -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="relative z-10 flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-6 pb-28 w-full">
+
+        <!-- ===== HERO ===== -->
+        <section class="mt-2 mb-8 text-center md:text-left reveal visible">
+            <div class="flex flex-col items-center md:items-start">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.05] tracking-tight text-center md:text-left">
+                    <span class="hero-gradient-text">Dikaa Bot</span> <br class="sm:hidden" />
+                    <span class="text-white">Ecosystem</span>
+                </h1>
+                <p class="text-[#94a3b8] text-base sm:text-lg mt-4 max-w-xl leading-relaxed text-center md:text-left">
+                    <span id="typing-text"></span><span class="typing-cursor"></span>
+                </p>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-6">
+                    <a href="#bot-cards" class="btn-primary px-7 py-3 rounded-full text-sm flex items-center gap-2">
+                        <i class="fas fa-bolt"></i> Explore Bots
+                    </a>
+                    <a href="#contact" class="border border-[#1e2a44] hover:border-[#00a8ff] px-7 py-3 rounded-full text-sm text-white/70 hover:text-white transition-all duration-300 flex items-center gap-2 hover:bg-[#00a8ff]/10 backdrop-blur-sm">
+                        <i class="fas fa-arrow-right"></i> Contact
+                    </a>
+                </div>
+            </div>
+            <div class="mt-6 h-px w-full bg-gradient-to-r from-transparent via-[#00a8ff]/30 to-transparent"></div>
+        </section>
+
+        <!-- ===== TENTANG SAYA (PROFIL) ===== -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 mb-10 reveal">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                <img src="https://cdn.aceimg.com/RqvsMIFLZ.jpg" alt="Yeremia Andika" class="avatar" id="profile-avatar" />
+                <div class="flex-1 text-center md:text-left">
+                    <h2 class="text-2xl font-bold text-white flex items-center justify-center md:justify-start gap-2">
+                        Yeremia Andika
+                        <span class="text-sm bg-[#00a8ff]/15 text-[#00a8ff] px-3 py-0.5 rounded-full font-mono-code border border-[#00a8ff]/20">Owner</span>
+                    </h2>
+                    <p class="text-[#94a3b8] text-sm mt-1 font-mono-code">@dikaa · Founder of Dikaa Bot Ecosystem</p>
+                    <p class="text-[#b9c7e0] text-sm leading-relaxed mt-3 max-w-2xl">
+                        Saya adalah pengembang dan penggiat teknologi WhatsApp automation. 
+                        Dengan pengalaman di Node.js dan integrasi API, saya membangun solusi bot 
+                        yang scalable dan mudah digunakan untuk bisnis maupun personal. 
+                        Dikaa Bot adalah wujud dari dedikasi saya untuk menghadirkan komunikasi 
+                        otomatis yang cerdas dan efisien.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+                        <span class="tag-chip"><i class="fab fa-node-js mr-1"></i> Node.js</span>
+                        <span class="tag-chip"><i class="fas fa-database mr-1"></i> MongoDB</span>
+                        <span class="tag-chip"><i class="fas fa-cloud mr-1"></i> REST API</span>
+                        <span class="tag-chip"><i class="fab fa-whatsapp mr-1"></i> WhatsApp Business</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== BOT SHOWCASE CARDS ===== -->
+        <section id="bot-cards" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- CARD 1 : Dika Bot WA — Pro (HOT) -->
+            <div class="glass-card rounded-2xl p-5 flex flex-col reveal reveal-delay-1 neon-border">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="badge-hot"><i class="fas fa-fire mr-1"></i> HOT</span>
+                    <div class="icon-circle float-slow">
+                        <i class="fas fa-robot text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2 flex-wrap">
+                        Dika Bot WA
+                        <span class="text-[#00a8ff] text-sm font-mono-code font-normal">— Pro</span>
+                    </h3>
+                    <p class="font-mono-code text-[#6b7f9b] text-xs tracking-wide">pro.bot · v3.2.1</p>
+                </div>
+                <p class="text-[#b9c7e0] text-sm leading-relaxed mt-2 flex-1">
+                    Auto‑reply, broadcast, dan manajemen multi‑sesi. <br />
+                    Dirancang untuk bisnis WhatsApp dengan volume tinggi.
+                </p>
+                <div class="flex flex-wrap gap-1.5 mt-4">
+                    <span class="tag-chip">Node.js</span>
+                    <span class="tag-chip">WhatsApp</span>
+                    <span class="tag-chip">Multi-Sesi</span>
+                    <span class="tag-chip">Broadcast</span>
+                    <span class="tag-chip">Analytics</span>
+                </div>
+                <a href="#" onclick="chatWithBot(event)" class="btn-primary w-full mt-5 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold">
+                    <i class="fab fa-whatsapp text-lg"></i> Chat With Bot
+                </a>
+            </div>
+
+            <!-- CARD 2 : Channel WhatsApp (Link) -->
+            <a href="https://whatsapp.com/channel/0029Vb8Ycen9WtC4fBSQa005" target="_blank" class="glass-card rounded-2xl p-5 flex flex-col link-card reveal reveal-delay-2 no-underline neon-border">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="badge-starter"><i class="fas fa-bullhorn mr-1"></i> CHANNEL</span>
+                    <div class="icon-circle float-fast" style="color: #25d366;">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2 flex-wrap">
+                        Dikaa Channel
+                        <span class="text-[#25d366] text-sm font-mono-code font-normal">— Official</span>
+                    </h3>
+                    <p class="font-mono-code text-[#6b7f9b] text-xs tracking-wide">channel.dikaa</p>
+                </div>
+                <p class="text-[#b9c7e0] text-sm leading-relaxed mt-2 flex-1">
+                    Dapatkan update terbaru tentang bot, tutorial, dan tips WhatsApp automation.
+                </p>
+                <div class="flex flex-wrap gap-1.5 mt-4">
+                    <span class="tag-chip">Update</span>
+                    <span class="tag-chip">Tips</span>
+                    <span class="tag-chip">Tutorial</span>
+                    <span class="tag-chip">Komunitas</span>
+                </div>
+                <div class="btn-primary w-full mt-5 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold" style="background: #25d366; box-shadow: 0 4px 25px rgba(37,211,102,0.3);">
+                    <i class="fab fa-whatsapp text-lg"></i> Kunjungi Channel
+                </div>
+            </a>
+
+            <!-- CARD 3 : Grup WhatsApp (Link) -->
+            <a href="https://chat.whatsapp.com/LrVU5bGAs2u1x4Fih6FtJz?s=cl&p=a&ilr=1" target="_blank" class="glass-card rounded-2xl p-5 flex flex-col link-card reveal reveal-delay-3 no-underline neon-border">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="badge-starter bg-[#1e2a44] text-[#94a3b8] border-none"><i class="fas fa-users mr-1"></i> GRUP</span>
+                    <div class="icon-circle float-slow" style="animation-delay: 1s; color: #25d366;">
+                        <i class="fas fa-comments text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2 flex-wrap">
+                        Komunitas Dikaa
+                        <span class="text-[#25d366] text-sm font-mono-code font-normal">— Grup</span>
+                    </h3>
+                    <p class="font-mono-code text-[#6b7f9b] text-xs tracking-wide">group.dikaa</p>
+                </div>
+                <p class="text-[#b9c7e0] text-sm leading-relaxed mt-2 flex-1">
+                    Bergabunglah dengan sesama pengguna dan developer untuk berdiskusi, tanya jawab, dan berbagi pengalaman.
+                </p>
+                <div class="flex flex-wrap gap-1.5 mt-4">
+                    <span class="tag-chip">Diskusi</span>
+                    <span class="tag-chip">Tanya Jawab</span>
+                    <span class="tag-chip">Kolaborasi</span>
+                    <span class="tag-chip">Support</span>
+                </div>
+                <div class="btn-primary w-full mt-5 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold" style="background: #25d366; box-shadow: 0 4px 25px rgba(37,211,102,0.3);">
+                    <i class="fab fa-whatsapp text-lg"></i> Gabung Grup
+                </div>
+            </a>
+
+        </section>
+
+        <!-- ===== EXTRA SECTION: WHY DIKAA BOT ===== -->
+        <section class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-5 reveal reveal-delay-4">
+            <div class="glass-card rounded-xl p-5 text-center neon-border">
+                <div class="text-3xl text-[#00a8ff] mb-2"><i class="fas fa-bolt"></i></div>
+                <h4 class="text-white font-semibold">Fast & Reliable</h4>
+                <p class="text-[#94a3b8] text-sm mt-1">Response time di bawah 500ms dengan kestabilan tinggi.</p>
+            </div>
+            <div class="glass-card rounded-xl p-5 text-center neon-border">
+                <div class="text-3xl text-[#25d366] mb-2"><i class="fas fa-shield-alt"></i></div>
+                <h4 class="text-white font-semibold">Secure</h4>
+                <p class="text-[#94a3b8] text-sm mt-1">Data terenkripsi dan sesi aman untuk privasi Anda.</p>
+            </div>
+            <div class="glass-card rounded-xl p-5 text-center neon-border">
+                <div class="text-3xl text-[#7c3aed] mb-2"><i class="fas fa-expand-arrows-alt"></i></div>
+                <h4 class="text-white font-semibold">Scalable</h4>
+                <p class="text-[#94a3b8] text-sm mt-1">Dari skala kecil hingga enterprise, kami siap.</p>
+            </div>
+        </section>
+
+        <!-- ===== CONTACT ===== -->
+        <div id="contact" class="mt-12 glass-card rounded-2xl p-8 md:p-10 reveal neon-border">
+            <div class="text-center mb-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">📬 Hubungi Saya</h2>
+                <p class="text-[#94a3b8] mt-2 text-sm md:text-base">Ikuti atau hubungi saya melalui media sosial di bawah ini</p>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-5">
+                <a href="#" onclick="chatWithBot(event)" class="btn-social btn-wa">
+                    <i class="fab fa-whatsapp text-2xl"></i> WhatsApp
+                </a>
+                <a href="https://www.instagram.com/dikk6n?igsh=cmlqZndkNnV5NDVi" target="_blank" class="btn-social btn-ig">
+                    <i class="fab fa-instagram text-2xl"></i> Instagram
+                </a>
+            </div>
+            <div class="mt-6 text-center text-[#64748b] text-xs font-mono-code">
+                📧 dikaa@bot.ecosystem · 📱 +62 822-2199-6995
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ===== BOTTOM NAV ===== -->
+    <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-50 px-6 py-2 flex justify-around items-center">
+        <a href="#" class="active" id="nav-home">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#bot-cards" id="nav-bot">
+            <i class="fas fa-robot"></i>
+            <span>Bot</span>
+        </a>
+        <a href="#contact" id="nav-contact">
+            <i class="fas fa-comment-dots"></i>
+            <span>Contact</span>
+        </a>
+    </nav>
+
+    <div class="h-16"></div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // 1. KONFIGURASI (NOMOR WHATSAPP BARU)
+            // ============================================================
+            const PHONE = '6282221996995';
+
+            // ============================================================
+            // 2. WHATSAPP
+            // ============================================================
+            window.chatWithBot = function(e) {
+                if (e) e.preventDefault();
+                const msg = encodeURIComponent('Halo Dikaa Bot! Saya tertarik dengan bot WhatsApp Anda.');
+                window.open(`https://wa.me/${PHONE}?text=${msg}`, '_blank');
+                return false;
+            };
+
+            // ============================================================
+            // 3. TYPING EFFECT
+            // ============================================================
+            (function typing() {
+                const el = document.getElementById('typing-text');
+                if (!el) return;
+                const phrases = [
+                    'Build, deploy, and scale WhatsApp automation',
+                    'Next‑gen AI bots for your business',
+                    'Multi‑session · Broadcast · Analytics',
+                    '24/7 reliable performance'
+                ];
+                let phraseIndex = 0,
+                    charIndex = 0,
+                    isDeleting = false,
+                    currentText = '';
+
+                function type() {
+                    const full = phrases[phraseIndex];
+                    if (isDeleting) {
+                        currentText = full.substring(0, charIndex - 1);
+                        charIndex--;
+                    } else {
+                        currentText = full.substring(0, charIndex + 1);
+                        charIndex++;
+                    }
+                    el.textContent = currentText;
+
+                    let delay = isDeleting ? 35 : 65;
+                    if (!isDeleting && charIndex === full.length) {
+                        delay = 2200;
+                        isDeleting = true;
+                    } else if (isDeleting && charIndex === 0) {
+                        isDeleting = false;
+                        phraseIndex = (phraseIndex + 1) % phrases.length;
+                        delay = 500;
+                    }
+                    setTimeout(type, delay);
+                }
+                type();
+            })();
+
+            // ============================================================
+            // 4. SCROLL REVEAL
+            // ============================================================
+            (function revealOnScroll() {
+                const reveals = document.querySelectorAll('.reveal');
+                if (!reveals.length) return;
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+                reveals.forEach(el => observer.observe(el));
+            })();
+
+            // ============================================================
+            // 5. NAV HIGHLIGHT
+            // ============================================================
+            (function navHighlight() {
+                const links = document.querySelectorAll('.bottom-nav a');
+                const home = document.getElementById('nav-home');
+                const bot = document.getElementById('nav-bot');
+                const contact = document.getElementById('nav-contact');
+
+                links.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        links.forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+
+                window.addEventListener('scroll', function() {
+                    const scrollY = window.scrollY;
+                    const hero = document.querySelector('section');
+                    const cards = document.getElementById('bot-cards');
+                    const contactSection = document.getElementById('contact');
+                    if (!hero || !cards || !contactSection) return;
+
+                    const heroBottom = hero.offsetTop + hero.offsetHeight - 80;
+                    const cardsTop = cards.offsetTop - 60;
+                    const contactTop = contactSection.offsetTop - 80;
+
+                    if (scrollY < heroBottom) {
+                        links.forEach(l => l.classList.remove('active'));
+                        home.classList.add('active');
+                    } else if (scrollY >= heroBottom && scrollY < cardsTop + cards.offsetHeight - 200) {
+                        links.forEach(l => l.classList.remove('active'));
+                        bot.classList.add('active');
+                    } else {
+                        links.forEach(l => l.classList.remove('active'));
+                        contact.classList.add('active');
+                    }
+                });
+            })();
+
+            // ============================================================
+            // 6. PARTIKEL (dengan warna bervariasi)
+            // ============================================================
+            (function particles() {
+                const canvas = document.getElementById('particle-canvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let w, h;
+                const particles = [];
+                const COUNT = 100;
+                const MAX_SPEED = 0.5;
+                const CONNECT_DIST = 150;
+
+                function resize() {
+                    w = canvas.width = window.innerWidth;
+                    h = canvas.height = window.innerHeight;
+                }
+                window.addEventListener('resize', resize);
+                resize();
+
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * w;
+                        this.y = Math.random() * h;
+                        this.vx = (Math.random() - 0.5) * MAX_SPEED * 2;
+                        this.vy = (Math.random() - 0.5) * MAX_SPEED * 2;
+                        this.radius = Math.random() * 2.5 + 1;
+                        this.opacity = Math.random() * 0.6 + 0.2;
+                        const colors = [
+                            `rgba(0, 168, 255, ${this.opacity})`,
+                            `rgba(37, 211, 102, ${this.opacity * 0.8})`,
+                            `rgba(124, 58, 237, ${this.opacity * 0.7})`,
+                            `rgba(255, 255, 255, ${this.opacity * 0.5})`
+                        ];
+                        this.color = colors[Math.floor(Math.random() * colors.length)];
+                    }
+                    update() {
+                        this.x += this.vx;
+                        this.y += this.vy;
+                        if (this.x < 0 || this.x > w) this.vx *= -1;
+                        if (this.y < 0 || this.y > h) this.vy *= -1;
+                        const cx = w / 2,
+                            cy = h / 2;
+                        const dx = cx - this.x,
+                            dy = cy - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 400) {
+                            const force = 0.002;
+                            this.vx += dx * force;
+                            this.vy += dy * force;
+                            const spd = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                            if (spd > MAX_SPEED) {
+                                this.vx = (this.vx / spd) * MAX_SPEED;
+                                this.vy = (this.vy / spd) * MAX_SPEED;
+                            }
+                        }
+                    }
+                    draw() {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = this.color;
+                        ctx.fill();
+                        if (this.radius > 1.8) {
+                            ctx.shadowColor = 'rgba(0, 168, 255, 0.15)';
+                            ctx.shadowBlur = 10;
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        }
+                    }
+                }
+
+                for (let i = 0; i < COUNT; i++) {
+                    particles.push(new Particle());
+                }
+
+                function drawLines() {
+                    for (let i = 0; i < particles.length; i++) {
+                        for (let j = i + 1; j < particles.length; j++) {
+                            const dx = particles[i].x - particles[j].x;
+                            const dy = particles[i].y - particles[j].y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            if (dist < CONNECT_DIST) {
+                                const alpha = (1 - dist / CONNECT_DIST) * 0.4;
+                                ctx.beginPath();
+                                ctx.moveTo(particles[i].x, particles[i].y);
+                                ctx.lineTo(particles[j].x, particles[j].y);
+                                ctx.strokeStyle = `rgba(0, 168, 255, ${alpha})`;
+                                ctx.lineWidth = 0.8;
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                }
+
+                function animate() {
+                    ctx.clearRect(0, 0, w, h);
+                    particles.forEach(p => {
+                        p.update();
+                        p.draw();
+                    });
+                    drawLines();
+                    requestAnimationFrame(animate);
+                }
+                animate();
+            })();
+
+            // ============================================================
+            // 7. PARALLAX ORBS
+            // ============================================================
+            (function parallaxOrbs() {
+                const orbs = document.querySelectorAll('.orb');
+                if (!orbs.length) return;
+                let mouseX = 0,
+                    mouseY = 0;
+                let currentX = 0,
+                    currentY = 0;
+
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+                    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+                });
+
+                function smoothOrbs() {
+                    currentX += (mouseX - currentX) * 0.015;
+                    currentY += (mouseY - currentY) * 0.015;
+                    orbs.forEach((orb, i) => {
+                        const factor = 12 + i * 8;
+                        const x = currentX * factor;
+                        const y = currentY * factor;
+                        orb.style.transform = `translate(${x}px, ${y}px) scale(1)`;
+                    });
+                    requestAnimationFrame(smoothOrbs);
+                }
+                smoothOrbs();
+            })();
+
+        })();
+    </script>
+
+</body>
+</html>
